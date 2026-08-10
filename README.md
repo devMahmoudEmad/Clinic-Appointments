@@ -13,6 +13,25 @@ dotnet run --project Clinic
 
 Open `http://localhost:5295`, log in with one of the demo accounts below, and start booking appointments.
 
+## Connection string location
+
+The connection string lives in **`Clinic/appsettings.json`** under `ConnectionStrings:ClinicDb`:
+
+```json
+{
+  "ConnectionStrings": {
+    "ClinicDb": "Server=(localdb)\\MSSQLLocalDB;Database=ClinicDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  }
+}
+```
+
+It is read in two places:
+
+- **`Clinic/Program.cs`** — at startup (`builder.Configuration.GetConnectionString("ClinicDb")`). The app **throws at startup** if the key is missing, so this key must always be present.
+- **`Clinic/Data/ClinicDbContextFactory.cs`** — at design time, so `dotnet ef` commands build the `DbContext` without booting the web app.
+
+Overriding it for a different SQL Server instance is done via environment variables (`ConnectionStrings__ClinicDb`), user-secrets, or by editing the file locally — the file itself is committed and non-secret.
+
 ## The main role: Secretary
 
 The application is designed around the secretary's daily workflow. A secretary can:
@@ -229,8 +248,10 @@ The seeder also creates the **Main Clinic** and a sample doctor **Dr. Ahmed (Gen
 
 ## Configuration / Secrets
 
+### Configuration files
+
 - `Clinic/appsettings.json` — committed, non-secret configuration:
-  - `ConnectionStrings:ClinicDb` — the `(localdb)\MSSQLLocalDB` connection string.
+  - `ConnectionStrings:ClinicDb` — the SQL Server connection string (see "Connection string location" near the top).
   - `Seed:AdminEmail`, `Seed:AdminPassword`, `Seed:SecretaryEmail`, `Seed:SecretaryPassword` — development-only demo credentials.
 - `Clinic/appsettings.Development.json` — development logging only.
 - Never commit real secrets. For any real deployment, override the connection string and `Seed` values via environment variables or user-secrets, and create proper users through the UI instead of relying on seeded accounts.
