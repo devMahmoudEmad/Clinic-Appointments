@@ -1,6 +1,6 @@
-# Clinic Management System
+# Clinic Appointments Management
 
-An ASP.NET Core MVC clinic management application for scheduling patient appointments. Secretaries manage appointments and patients; admins manage doctors, doctor schedules, and users. Available appointment slots are **calculated** on the fly from each doctor's weekly schedule and schedule exceptions — nothing is stored.
+An ASP.NET Core MVC clinic Appointments management application for scheduling patient appointments. Secretaries manage appointments and patients; admins manage doctors, doctor schedules, and users. Available appointment slots are **calculated** on the fly from each doctor's weekly schedule and schedule exceptions — nothing is stored.
 
 ## Quick Start
 
