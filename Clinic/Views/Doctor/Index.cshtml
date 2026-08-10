@@ -1,0 +1,47 @@
+@model DoctorIndexViewModel
+@{
+    ViewData["Title"] = "Doctors";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Doctors</h1>
+    <a class="btn btn-primary" asp-action="Create">Add Doctor</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Specialization</th>
+                <th>Clinic</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doctor in Model.Doctors)
+            {
+                <tr>
+                    <td>@doctor.Name</td>
+                    <td>@doctor.Specialization</td>
+                    <td>@doctor.ClinicName</td>
+                    <td>@doctor.Phone</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@doctor.DoctorId">Schedule</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@doctor.DoctorId">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.Doctors.Count == 0)
+    {
+        <p class="text-muted">No doctors yet.</p>
+    }
+
+    <div class="mt-2">
+        <partial name="_Pagination" model="Model" />
+    </div>
+</div>

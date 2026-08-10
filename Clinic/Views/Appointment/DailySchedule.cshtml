@@ -1,0 +1,106 @@
+@model DailyScheduleViewModel
+@{
+    ViewData["Title"] = "Doctor Daily Schedule";
+}
+
+<h1>Doctor Daily Schedule</h1>
+
+<form asp-action="DailySchedule" method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label" asp-for="DoctorId">Doctor</label>
+        <select class="form-select" asp-for="DoctorId" asp-items="Model.Doctors">
+            <option value="">Select doctor</option>
+        </select>
+        <span asp-validation-for="DoctorId" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" asp-for="Date">Date</label>
+        <input type="date" class="form-control" asp-for="Date" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" asp-for="DurationMinutes">Appointment Duration</label>
+        <select class="form-select" asp-for="DurationMinutes" id="DurationMinutes">
+            <option value="15">15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+        </select>
+        <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Show</button>
+    </div>
+</form>
+
+@if (!Model.DoctorId.HasValue || !Model.Date.HasValue)
+{
+    <p class="text-muted">Select a doctor, a date and a duration to view the daily schedule.</p>
+}
+else if (!Model.IsWorking)
+{
+    <div class="alert alert-warning">
+        @(Model.Message ?? (Model.IsDayOff ? "The selected doctor is on a day off." : "The selected doctor is not available on this date."))
+    </div>
+}
+else
+{
+    <h5>@Model.DoctorName</h5>
+
+    <h6>Working hours</h6>
+    <ul class="list-unstyled mb-3">
+        @foreach (var period in Model.WorkingPeriods)
+        {
+            <li>@(period.StartTime.ToString("HH:mm")) &ndash; @(period.EndTime.ToString("HH:mm"))</li>
+        }
+    </ul>
+
+    @if (Model.NextAvailableSlot.HasValue)
+    {
+        <div class="alert alert-success py-2">
+            Next available: <strong>@(Model.NextAvailableSlot.Value.ToString("HH:mm"))</strong>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-warning py-2">@Model.Message</div>
+    }
+
+    @if (Model.Rows.Count > 0)
+    {
+        <table class="table table-sm table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Patient</th>
+                    <th>Appointment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@(row.StartTime.ToString("HH:mm"))</td>
+                        <td>
+                            @if (row.Status == "Booked")
+                            {
+                                <span class="badge text-bg-danger">@row.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">@row.Status</span>
+                            }
+                        </td>
+                        <td>@row.PatientName</td>
+                        <td>@(row.StartTime.ToString("HH:mm")) &ndash; @(row.EndTime.ToString("HH:mm"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

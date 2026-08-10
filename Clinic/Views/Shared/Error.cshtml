@@ -1,0 +1,31 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+@if (Model.StatusCode == 404)
+{
+    <div class="py-5 text-center">
+        <h1 class="display-5 fw-bold">404</h1>
+        <h2>Page Not Found</h2>
+        <p class="lead">The page you requested could not be found. It may have been moved or deleted.</p>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+}
+else
+{
+    <div class="py-5 text-center">
+        <h1 class="display-5 fw-bold text-danger">@(Model.StatusCode.HasValue ? Model.StatusCode.ToString() : "Error")</h1>
+        <h2 class="text-danger">Something went wrong</h2>
+        <p class="lead">@Model.Message</p>
+
+        @if (Model.ShowRequestId)
+        {
+            <p class="text-muted">
+                <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+}

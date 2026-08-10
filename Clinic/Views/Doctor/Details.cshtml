@@ -1,0 +1,153 @@
+@model DoctorDetailsViewModel
+@{
+    ViewData["Title"] = Model.Doctor.Name + " — Schedule";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">@Model.Doctor.Name</h1>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Doctor.DoctorId">Edit Doctor</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back to list</a>
+    </div>
+</div>
+
+<p class="text-muted">@Model.Doctor.Specialization — @Model.Doctor.ClinicName — @Model.Doctor.Phone</p>
+
+<p class="mb-1"><strong>Weekly hours:</strong> @Model.ScheduleSummary</p>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">Weekly Schedule</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Day</th><th>Start</th><th>End</th><th>Active</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var schedule in Model.WeeklySchedules)
+                        {
+                            <tr>
+                                <td>@schedule.DayOfWeek</td>
+                                <td>@schedule.StartTime.ToString("HH:mm")</td>
+                                <td>@schedule.EndTime.ToString("HH:mm")</td>
+                                <td>@(schedule.IsActive ? "Yes" : "No")</td>
+                                <td>
+                                    <form asp-action="RemoveWeeklySchedule" method="post"
+                                          asp-route-doctorId="@Model.Doctor.DoctorId"
+                                          asp-route-scheduleId="@schedule.ScheduleId"
+                                          onsubmit="return confirm('Remove this working period?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (Model.WeeklySchedules.Count == 0)
+                {
+                    <p class="text-muted">No weekly schedule defined.</p>
+                }
+
+                <h6 class="mt-3">Add Working Period</h6>
+                <form asp-action="AddWeeklySchedule" asp-route-id="@Model.Doctor.DoctorId" method="post" class="row g-2">
+                    <div class="col-4">
+                        <select class="form-select form-select-sm" asp-for="DayOfWeek">
+                            @foreach (var day in Enum.GetValues<DayOfWeek>())
+                            {
+                                <option value="@day">@day</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input class="form-control form-control-sm" type="time" asp-for="StartTime" />
+                    </div>
+                    <div class="col-3">
+                        <input class="form-control form-control-sm" type="time" asp-for="EndTime" />
+                    </div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                    </div>
+                    <div class="col-12">
+                        <span asp-validation-for="StartTime" class="text-danger small"></span>
+                        <span asp-validation-for="EndTime" class="text-danger small"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">Schedule Exceptions</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Date</th><th>Type</th><th>Hours</th><th>Reason</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var exception in Model.ScheduleExceptions)
+                        {
+                            <tr>
+                                <td>@exception.ExceptionDate.ToString("dd/MM/yyyy")</td>
+                                <td>@exception.ExceptionType</td>
+                                <td>
+                                    @(exception.ExceptionType == ScheduleExceptionType.ModifiedHours
+                                        ? exception.StartTime!.Value.ToString("HH:mm") + " – " + exception.EndTime!.Value.ToString("HH:mm")
+                                        : "—")
+                                </td>
+                                <td>@exception.Reason</td>
+                                <td>
+                                    <form asp-action="RemoveException" method="post"
+                                          asp-route-doctorId="@Model.Doctor.DoctorId"
+                                          asp-route-exceptionId="@exception.ExceptionId"
+                                          onsubmit="return confirm('Remove this exception?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (Model.ScheduleExceptions.Count == 0)
+                {
+                    <p class="text-muted">No exceptions.</p>
+                }
+
+                <h6 class="mt-3">Add Exception</h6>
+                <form asp-action="AddException" asp-route-id="@Model.Doctor.DoctorId" method="post" class="row g-2">
+                    <div class="col-4">
+                        <input type="date" class="form-control form-control-sm" asp-for="ExceptionDate" id="ExceptionDate" />
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select form-select-sm" asp-for="ExceptionType">
+                            @foreach (var type in Enum.GetValues<ScheduleExceptionType>())
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <input class="form-control form-control-sm" type="time" asp-for="StartTimeException" placeholder="Start" />
+                    </div>
+                    <div class="col-2">
+                        <input class="form-control form-control-sm" type="time" asp-for="EndTimeException" placeholder="End" />
+                    </div>
+                    <div class="col-10">
+                        <input class="form-control form-control-sm" asp-for="Reason" placeholder="Reason (e.g. Vacation)" />
+                    </div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                    </div>
+                    <div class="col-12">
+                        <span asp-validation-for="ExceptionDate" class="text-danger small"></span>
+                        <span asp-validation-for="StartTimeException" class="text-danger small"></span>
+                        <span asp-validation-for="EndTimeException" class="text-danger small"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

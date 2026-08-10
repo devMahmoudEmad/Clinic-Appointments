@@ -1,0 +1,103 @@
+@model Clinic.Models.Dtos.IPagedViewModel
+@{
+    if (Model.TotalPages <= 1)
+    {
+        return;
+    }
+
+    var currentPage = Model.CurrentPage;
+    var totalPages = Model.TotalPages;
+
+    // Preserve every existing query-string filter; only the page number changes.
+    Func<int, string> pageUrl = page =>
+    {
+        var query = Context.Request.Query;
+        var sb = new System.Text.StringBuilder();
+        var hasParam = false;
+
+        foreach (var pair in query)
+        {
+            if (string.Equals(pair.Key, "page", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            foreach (var value in pair.Value)
+            {
+                if (hasParam)
+                {
+                    sb.Append('&');
+                }
+
+                sb.Append(Uri.EscapeDataString(pair.Key))
+                  .Append('=')
+                  .Append(Uri.EscapeDataString(value ?? string.Empty));
+                hasParam = true;
+            }
+        }
+
+        if (hasParam)
+        {
+            sb.Append('&');
+        }
+
+        sb.Append("page=").Append(page);
+        return "?" + sb.ToString();
+    };
+
+    // Compact window: always show first/last, current ± 1, ellipsis in between.
+    var pages = new List<int>();
+    for (var p = 1; p <= totalPages; p++)
+    {
+        if (p == 1 || p == totalPages || Math.Abs(p - currentPage) <= 1)
+        {
+            pages.Add(p);
+        }
+        else if (pages.Count == 0 || pages[^1] != -1)
+        {
+            pages.Add(-1);
+        }
+    }
+}
+
+<nav aria-label="Pagination">
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item @(currentPage > 1 ? "" : "disabled")">
+            @if (currentPage > 1)
+            {
+                <a class="page-link" href="@pageUrl(currentPage - 1)">&laquo; Previous</a>
+            }
+            else
+            {
+                <span class="page-link">&laquo; Previous</span>
+            }
+        </li>
+
+        @foreach (var p in pages)
+        {
+            if (p == -1)
+            {
+                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+            }
+            else if (p == currentPage)
+            {
+                <li class="page-item active"><span class="page-link">@p</span></li>
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" href="@pageUrl(p)">@p</a></li>
+            }
+        }
+
+        <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
+            @if (currentPage < totalPages)
+            {
+                <a class="page-link" href="@pageUrl(currentPage + 1)">Next &raquo;</a>
+            }
+            else
+            {
+                <span class="page-link">Next &raquo;</span>
+            }
+        </li>
+    </ul>
+</nav>

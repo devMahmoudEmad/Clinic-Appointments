@@ -1,0 +1,45 @@
+@model DoctorCreateViewModel
+@{
+    ViewData["Title"] = "Add Doctor";
+}
+
+<h1>Add Doctor</h1>
+
+<form asp-action="Create" method="post" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="ClinicId"></label>
+        <select class="form-select" asp-for="ClinicId" asp-items="Model.Clinics">
+            <option value="">Select clinic</option>
+        </select>
+        <span asp-validation-for="ClinicId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Name"></label>
+        <input class="form-control" asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Specialization"></label>
+        <input class="form-control" asp-for="Specialization" />
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Phone"></label>
+        <input class="form-control" asp-for="Phone" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save Doctor</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back to list</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

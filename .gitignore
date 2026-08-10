@@ -1,0 +1,44 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]obj/
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.vsix
+*.vssscc
+*.pfx
+*.publishprofile
+*.cache
+
+# Test results
+TestResults/
+*.trx
+coverage/
+coverage.*.xml
+
+# Publish output
+publish/
+**/publish/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local secrets (never commit)
+appsettings.Local.json
+*.local.json
+
+# AI coding-agent instructions (not part of the app)
+AGENTS.md
+
+# dotnet ef tooling
+*.tempout

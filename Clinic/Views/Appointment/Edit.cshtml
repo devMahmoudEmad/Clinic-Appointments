@@ -1,0 +1,75 @@
+@model AppointmentEditViewModel
+@{
+    ViewData["Title"] = "Edit Appointment";
+}
+
+<h1>Edit Appointment</h1>
+
+<form asp-action="Edit" method="post" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="AppointmentId" id="AppointmentId" />
+    <input type="hidden" asp-for="PatientId" id="PatientId" />
+    <input type="hidden" asp-for="StartTime" id="StartTime" />
+
+    <div class="col-md-6">
+        <label class="form-label">Patient</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="patientSearch" placeholder="Search by name or phone" />
+            <button type="button" class="btn btn-outline-primary" id="searchPatientBtn">Search</button>
+            <button type="button" class="btn btn-outline-success" id="newPatientBtn" data-bs-toggle="modal" data-bs-target="#patientCreateModal">New Patient</button>
+        </div>
+        <div id="patientResults" class="mt-2"></div>
+        <div id="selectedPatientName" class="form-text">
+            @(string.IsNullOrEmpty(Model.PatientName) ? "" : "Selected: " + Model.PatientName)
+        </div>
+        <span asp-validation-for="PatientId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="DoctorId">Doctor</label>
+        <select class="form-select" asp-for="DoctorId" asp-items="Model.Doctors">
+            <option value="">Select doctor</option>
+        </select>
+        <span asp-validation-for="DoctorId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="AppointmentDate">Date</label>
+        <input type="date" class="form-control" asp-for="AppointmentDate" id="AppointmentDate" />
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="DurationMinutes">Appointment Duration</label>
+        <select class="form-select" asp-for="DurationMinutes" id="DurationMinutes">
+            <option value="15">15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+        </select>
+        <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label class="form-label">Available Times</label>
+        <div id="slotContainer" class="d-flex flex-wrap gap-2">
+            <span class="text-muted">Select a doctor and a date to see available times.</span>
+        </div>
+        <div id="slotError" class="text-danger"></div>
+        <div id="slotSummary" class="form-text"></div>
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back to list</a>
+    </div>
+</form>
+
+<partial name="_PatientCreateModal" />
+
+@section Scripts {
+    <script src="~/js/appointment-form.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+}

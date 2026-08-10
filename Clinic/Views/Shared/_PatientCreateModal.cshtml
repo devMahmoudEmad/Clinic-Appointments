@@ -1,0 +1,49 @@
+@*
+    Modal for inline patient creation on the appointment forms.
+    Posts JSON to Patient/CreateAjax with the anti-forgery token in the
+    RequestVerificationToken header (see appointment-form.js).
+*@
+<div class="modal fade" id="patientCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="patientCreateForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Register New Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="patientCreateErrors" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="newPatientName">Name</label>
+                        <input type="text" class="form-control" id="newPatientName" name="Name" required />
+                        <span class="invalid-feedback" id="newPatientNameError"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="newPatientBirthDate">Birth Date</label>
+                        <input type="date" class="form-control" id="newPatientBirthDate" name="BirthDate" required />
+                        <span class="invalid-feedback" id="newPatientBirthDateError"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="newPatientGender">Gender</label>
+                        <select class="form-select" id="newPatientGender" name="Gender">
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span class="invalid-feedback" id="newPatientGenderError"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="newPatientPhone">Phone</label>
+                        <input type="text" class="form-control" id="newPatientPhone" name="Phone" required />
+                        <span class="invalid-feedback" id="newPatientPhoneError"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="py-5 text-center">
+    <h1 class="display-5 fw-bold text-danger">403</h1>
+    <h2 class="text-danger">Access Denied</h2>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <p class="lead">You are signed in as <strong>@User.Identity.Name</strong>.</p>
+        <p class="mb-1">
+            @foreach (var role in ApplicationRoles.All)
+            {
+                @if (User.IsInRole(role))
+                {
+                    <span class="badge @(role == ApplicationRoles.Admin ? "text-bg-danger" : "text-bg-secondary")">@role</span>
+                }
+            }
+        </p>
+    }
+    else
+    {
+        <p class="lead">You are not signed in.</p>
+    }
+
+    <p class="text-muted">You don't have permission to access this page. If you believe this is a mistake, contact an administrator.</p>
+
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Home</a>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-secondary">Sign in as a different user</button>
+        </form>
+    }
+</div>

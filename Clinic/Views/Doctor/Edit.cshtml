@@ -1,0 +1,48 @@
+@model DoctorEditViewModel
+@{
+    ViewData["Title"] = "Edit Doctor";
+}
+
+<h1>Edit Doctor</h1>
+
+<form asp-action="Edit" method="post" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="DoctorId" />
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="ClinicId"></label>
+        <select class="form-select" asp-for="ClinicId" asp-items="Model.Clinics">
+            <option value="">Select clinic</option>
+        </select>
+        <span asp-validation-for="ClinicId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Name"></label>
+        <input class="form-control" asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Specialization"></label>
+        <input class="form-control" asp-for="Specialization" />
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label" asp-for="Phone"></label>
+        <input class="form-control" asp-for="Phone" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.DoctorId">Manage Schedule</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back to list</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
